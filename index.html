@@ -1226,6 +1226,9 @@ function paintLayers(alpha) {
     if (SPR.length) buildIntro(begin); else begin();
   });
   cv.addEventListener('pointerdown', () => { if (intro && intro.t < INTRO_START) intro.t = INTRO_START; });
+  // Remove the injected "Powered by Netlify" badge (it appears ~3s after load): once at 5s and again at 7s
+  const dropBadge = () => document.querySelectorAll('#nl-badge-frame, iframe[title="Powered by Netlify"]').forEach(n => n.remove());
+  setTimeout(dropBadge, 5000); setTimeout(dropBadge, 7000);
   window.__dbg = { game, frogs, leaves, FS, SPR, get intro() { return intro; }, R: () => [W, H, R0, DPR] };
   requestAnimationFrame(frame);
 })();
