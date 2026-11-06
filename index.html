@@ -10,6 +10,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600&family=Outfit:wght@500;600&display=swap">
 <style>
+body.intro .top, body.intro .dock { opacity: 0; pointer-events: none; }
+.top, .dock { transition: opacity 0.9s ease; }
 /* Layout: one full-bleed watercolor pond canvas; a title top-left and glass controls docked to the bottom edge. */
 :root {
   --pond-deep: #1b6bb8;
@@ -1128,11 +1130,80 @@ function paintLayers(alpha) {
   window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(resize, 120); });
 
   let last = performance.now() / 1000;
+  /* ---------- Opening scene: a leaf with the title falls, lands, sinks, game starts ---------- */
+  let intro = null;
+  function buildIntro(startCb) {
+    let best = SPR[0], bd = 9;
+    for (const s of SPR) { const d = Math.abs(Math.log(s.w / s.h)); if (d < bd) { bd = d; best = s; } }
+    const sp = best, mkC = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
+    const base = rnd(-0.35, 0.35);
+    const ready = () => {
+      const text = mkC(sp.w, sp.h), g = text.getContext('2d'), size = sp.rt * 0.52;
+      g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.font = '600 ' + size + 'px Outfit, "DM Sans", system-ui, sans-serif';
+      // find the body of the leaf (ignore the stem) so the title sits on it
+      const pr = mkC(sp.w, sp.h), pg = pr.getContext('2d'); pg.drawImage(sp.img, 0, 0);
+      const id = pg.getImageData(0, 0, sp.w, sp.h).data; let mx = 0, my = 0, mn = 0, x0 = 1e9, x1 = -1;
+      for (let yy = 0; yy < sp.h; yy += 2) for (let xx = 0; xx < sp.w; xx += 2) if (id[(yy * sp.w + xx) * 4 + 3] > 120) { mx += xx; my += yy; mn++; x0 = Math.min(x0, xx); x1 = Math.max(x1, xx); }
+      const cx = mn ? mx / mn : sp.px, cy = mn ? my / mn : sp.py, bw = Math.max(40, x1 - x0);
+      let fs = size; g.font = '600 ' + fs + 'px Outfit, "DM Sans", system-ui, sans-serif';
+      const wmax = bw * 0.5, mw = Math.max(g.measureText('Leafy').width, g.measureText('Lake').width);
+      fs = fs * Math.min(1, wmax / mw); g.font = '600 ' + fs + 'px Outfit, "DM Sans", system-ui, sans-serif';
+      g.translate(cx, cy); g.rotate(-base);
+      for (const [dx, dy, col] of [[1.2, 1.6, 'rgba(255,236,190,0.35)'], [0, 0, 'rgba(78,26,6,0.86)']]) {
+        g.fillStyle = col; g.fillText('Leafy', dx, dy - fs * 0.52); g.fillText('Lake', dx, dy + fs * 0.55);
+      }
+      g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'destination-in'; g.drawImage(sp.img, 0, 0);
+      intro = { t: 0, sp, text, base, started: false, r: R0 * 1.55, landY: H * 0.47, x0: W / 2, rip: 0, startCb };
+    };
+    (document.fonts && document.fonts.load ? document.fonts.load('600 40px Outfit').catch(() => {}) : Promise.resolve()).then(ready, ready);
+  }
+  const INTRO_FALL = 3.9, INTRO_START = 5.5, INTRO_END = 6.3;
+  function stepIntro(dt) {
+    const I = intro; I.t += dt;
+    if (I.t >= INTRO_FALL && I.rip === 0) { I.rip = 1; const p = introPos(I, 1); addRipple(p.x, I.landY, I.r * 0.2, I.r * 2.2, 2.2, 0.9, 4); addRipple(p.x, I.landY, I.r * 0.2, I.r * 1.3, 1.6, 0.7, 2, 0.25); }
+    if (I.t >= INTRO_FALL + 1.3 && I.rip === 1) { I.rip = 2; const p = introPos(I, 1); addRipple(p.x, I.landY, I.r * 0.4, I.r * 1.6, 1.8, 0.7, 3); }
+    if (I.t >= INTRO_START && !I.started) { I.started = true; I.startCb(); }
+    if (I.t >= INTRO_END) intro = null;
+  }
+  function introPos(I, p) {
+    const A = Math.min(W * 0.3, 130), y0 = -I.r * 1.6, ph = p * TAU * 1.35 + 0.6, damp = 1 - p * 0.82;
+    return {
+      x: I.x0 + A * Math.sin(ph) * damp,
+      y: y0 + (I.landY - y0) * (p + 0.035 * Math.sin(p * TAU * 2.7) * (1 - p)),
+      sway: Math.cos(ph) * 0.5 * (1 - p * 0.75)
+    };
+  }
+  function drawIntro() {
+    const I = intro; if (!I) return;
+    const p = Math.min(1, I.t / INTRO_FALL), pos = introPos(I, p), sp = I.sp, z = 1 - p;
+    let x = pos.x, y = pos.y, alpha = 1, tAlpha = 1, sc = 1, flip = 1, rot = I.base + pos.sway;
+    if (I.t > INTRO_FALL) {
+      const f = I.t - INTRO_FALL, q = clamp((f - 0.9) / 1.4, 0, 1);
+      x = introPos(I, 1).x + Math.sin(f * 1.7) * 2; y = I.landY + Math.sin(f * 2.1) * 1.5;
+      rot = I.base + Math.sin(f * 1.3) * 0.03; sc = 1 - 0.08 * q;
+      alpha = 1 - Math.pow(q, 1.4); tAlpha = clamp(1 - q * 1.8, 0, 1);
+    } else {
+      flip = 1 - (1 - Math.abs(Math.cos(I.t * 3.4))) * 0.16 * z;
+    }
+    const k = I.r / sp.rt * sc;
+    const sa = 0.4 * sm01(0.15, 1, p) * alpha;
+    if (sa > 0.01) {
+      ctx.save(); ctx.globalAlpha = sa; ctx.translate(x + 26 * z + 6, I.landY + 8); ctx.rotate(rot); ctx.scale(k * (1 + z * 0.25), k * (1 + z * 0.25));
+      ctx.drawImage(sp.soft, -(sp.px + 56), -(sp.py + 56)); ctx.restore(); ctx.globalAlpha = 1;
+    }
+    if (alpha < 0.01) return;
+    ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(k * flip, k);
+    ctx.globalAlpha = alpha; ctx.drawImage(sp.img, -sp.px, -sp.py);
+    if (tAlpha > 0.01) { ctx.globalAlpha = alpha * tAlpha; ctx.drawImage(I.text, -sp.px, -sp.py); }
+    ctx.restore(); ctx.globalAlpha = 1;
+  }
   function frame(ts) {
     const now = ts / 1000;
     const dt = Math.min(0.05, Math.max(0.001, now - last));
     last = now; time += dt;
-    update(dt); draw();
+    if (intro) stepIntro(dt);
+    update(dt); draw(); drawIntro();
     requestAnimationFrame(frame);
   }
 
@@ -1142,13 +1213,15 @@ function paintLayers(alpha) {
   window.__leaves = leaves;
   buildFrogSprites();
   try { game.best = parseInt(localStorage.getItem('leafyLake.best') || '0', 10) || 0; } catch (_) {}
+  document.body.classList.add('intro');
   prepSprites(() => {
-    dropLeaves(4, 0.3);
     let m = 'zen';
     try { m = localStorage.getItem('leafyLake.mode') === 'game' ? 'game' : 'zen'; } catch (_) {}
-    setMode(m);
+    const begin = () => { document.body.classList.remove('intro'); dropLeaves(4, 0.3); setMode(m); };
+    if (SPR.length) buildIntro(begin); else begin();
   });
-  window.__dbg = { game, frogs, leaves, FS };
+  cv.addEventListener('pointerdown', () => { if (intro && intro.t < INTRO_START) intro.t = INTRO_START; });
+  window.__dbg = { game, frogs, leaves, FS, SPR, get intro() { return intro; }, R: () => [W, H, R0, DPR] };
   requestAnimationFrame(frame);
 })();
 </script>
