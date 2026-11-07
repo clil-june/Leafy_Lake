@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600&family=Outfit:wght@500;600&display=swap">
 <style>
 .topbar h1 { display: none; }
-.modes { margin-left: auto; }
+.modes { margin: 0 auto; }
 .hud .score { display: none; }
 body.intro .top, body.intro .dock { opacity: 0; pointer-events: none; }
 .top, .dock { transition: opacity 0.9s ease; }
@@ -21,7 +21,7 @@ body.intro .top, body.intro .dock { opacity: 0; pointer-events: none; }
   --pond: #2f8fdc;
   --foam: #f2fbff;
   --ink: #0b3a6b;
-  --glass: rgba(9, 52, 104, 0.45);
+  --glass: rgba(255, 255, 255, 0.4);
   --font-display: 'Outfit', 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-ui: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
@@ -99,31 +99,31 @@ button {
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.5);
   background: var(--glass);
-  color: var(--foam);
+  color: var(--ink);
   font: 600 16px/1 var(--font-ui);
   cursor: pointer;
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(28px) saturate(1.15);
+  backdrop-filter: blur(28px) saturate(1.15);
   touch-action: manipulation;
 }
-button.primary { background: rgba(242, 251, 255, 0.94); color: var(--ink); border-color: transparent; }
-button[aria-pressed="true"] { background: rgba(242, 251, 255, 0.94); color: var(--ink); border-color: transparent; }
+button.primary { font-weight: 700; }
+button[aria-pressed="true"] { background: rgba(255, 255, 255, 0.85); color: var(--ink); }
 button:active { transform: scale(0.97); }
 button:focus-visible { outline: 3px solid var(--foam); outline-offset: 2px; }
 
 .topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.modes { pointer-events: auto; display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.4); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
-.modes button { min-height: 36px; padding: 0 14px; font-size: 14px; border: 0; background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }
-.modes button[aria-pressed="true"] { background: rgba(242, 251, 255, 0.94); color: var(--ink); }
-.hud { margin-top: 8px; display: flex; align-items: center; gap: 14px; font-size: 15px; font-weight: 600; text-shadow: 0 1px 10px rgba(8, 50, 110, 0.7); font-variant-numeric: tabular-nums; }
+.modes { pointer-events: auto; display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.55); -webkit-backdrop-filter: blur(28px) saturate(1.15); backdrop-filter: blur(28px) saturate(1.15); }
+.modes button { min-height: 36px; padding: 0 14px; font-size: 14px; border: 0; background: transparent; color: var(--ink); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.modes button[aria-pressed="true"] { background: rgba(255, 255, 255, 0.85); color: var(--ink); }
+.hud { margin-top: 0; display: flex; align-items: center; gap: 14px; font-size: 15px; font-weight: 600; text-shadow: 0 1px 10px rgba(8, 50, 110, 0.7); font-variant-numeric: tabular-nums; }
 .hud b { font-size: 20px; }
 .lives { display: flex; gap: 6px; }
 .lives i { width: 32px; height: 32px; background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cg stroke=%22%231f4a45%22 stroke-width=%223.6%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cpath fill=%22%238cc63f%22 d=%22M7 55C6 36 20 23 37 25C42 17 54 17 58 25C61 30 57 35 50 36C46 37 46 41 48 46C49 50 48 55 44 55Z%22/%3E%3Cpath fill=%22%23a6d65a%22 d=%22M13 53C13 43 22 37 34 39C34 47 26 53 13 53Z%22/%3E%3Ccircle fill=%22%23fff%22 cx=%2245%22 cy=%2221%22 r=%226%22/%3E%3C/g%3E%3Ccircle fill=%22%231f4a45%22 cx=%2246.5%22 cy=%2221.5%22 r=%222.4%22/%3E%3C/svg%3E") center / contain no-repeat; filter: drop-shadow(0 1px 4px rgba(8, 50, 110, 0.45)); transition: opacity 0.3s ease, filter 0.3s ease; }
 .lives i.off { opacity: 0.28; filter: grayscale(1) brightness(1.4); }
-.toast { position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 130px); transform: translate(-50%, -6px); padding: 8px 16px; border-radius: 999px; background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.4); font-weight: 600; font-size: 15px; opacity: 0; transition: opacity 0.25s ease, transform 0.25s ease; pointer-events: none; white-space: nowrap; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.toast { color: var(--ink); position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 130px); transform: translate(-50%, -6px); padding: 8px 16px; border-radius: 999px; background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.4); font-weight: 600; font-size: 15px; opacity: 0; transition: opacity 0.25s ease, transform 0.25s ease; pointer-events: none; white-space: nowrap; -webkit-backdrop-filter: blur(28px) saturate(1.15); backdrop-filter: blur(28px) saturate(1.15); }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
-.over { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(8, 52, 104, 0.4); padding: 16px; }
-.over .card { padding: 24px; border-radius: 24px; background: rgba(9, 52, 104, 0.8); border: 1px solid rgba(255, 255, 255, 0.4); text-align: center; display: flex; flex-direction: column; gap: 12px; max-width: 320px; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.over { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: transparent; padding: 16px; }
+.over .card { padding: 24px; border-radius: 24px; background: var(--glass); color: var(--ink); border: 1px solid rgba(255, 255, 255, 0.4); text-align: center; display: flex; flex-direction: column; gap: 12px; max-width: 320px; -webkit-backdrop-filter: blur(28px) saturate(1.15); backdrop-filter: blur(28px) saturate(1.15); }
 .over h2 { margin: 0; font-family: var(--font-display); font-size: 26px; font-weight: 600; }
 .over p { margin: 0; font-size: 17px; font-variant-numeric: tabular-nums; }
 [hidden] { display: none !important; }
@@ -131,17 +131,6 @@ button:focus-visible { outline: 3px solid var(--foam); outline-offset: 2px; }
 
 <canvas id="pond" aria-label="A pond with autumn leaves. Drag a leaf to move it and leave a wake."></canvas>
 <div class="top">
-  <div class="topbar">
-    <h1>Leafy Lake</h1>
-    <div class="modes" role="group" aria-label="Mode">
-      <button id="mZen" type="button" aria-pressed="true">Zen</button>
-      <button id="mGame" type="button" aria-pressed="false">Game</button>
-    </div>
-  </div>
-  <div class="hud" id="hud" hidden>
-    <span class="score">Score <b id="score">0</b></span>
-    <span class="lives" id="lives" role="img" aria-label="3 lives left"><i></i><i></i><i></i></span>
-  </div>
   <p class="hint" id="hint">Drag a leaf across the water to leave a wake.</p>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -156,9 +145,16 @@ button:focus-visible { outline: 3px solid var(--foam); outline-offset: 2px; }
   </div>
 </div>
 <div class="dock">
+  <div class="hud" id="hud" hidden>
+    <span class="lives" id="lives" role="img" aria-label="3 lives left"><i></i><i></i><i></i></span>
+  </div>
   <div class="count" id="count" aria-live="polite"></div>
   <div class="row">
     <button class="primary" id="drop" type="button">Drop leaves</button>
+  </div>
+  <div class="modes" role="group" aria-label="Mode">
+    <button id="mZen" type="button" aria-pressed="true">Zen</button>
+    <button id="mGame" type="button" aria-pressed="false">Game</button>
   </div>
 </div>
 
@@ -643,7 +639,7 @@ function removeLeaf(i) {
     spawnT -= dt;
     if (alive < 5 && spawnT <= 0) { dropLeaves(1, 0); spawnT = rnd(4, 7); }
     updateFrogs(dt);
-    const txt = game.mode === 'game' ? 'Best ' + game.best : (count === 1 ? '1 leaf on the water' : count + ' leaves on the water');
+    const txt = game.mode === 'game' ? '' : (count === 1 ? '1 leaf on the water' : count + ' leaves on the water');
     if (txt !== lastTxt) { lastTxt = txt; countEl.textContent = txt; }
   }
 
@@ -712,7 +708,6 @@ const FS = {};
     clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('show'), 1500);
   }
   function setHud() {
-    document.getElementById('score').textContent = game.score;
     const dots = document.querySelectorAll('#lives i');
     dots.forEach((d, i) => d.classList.toggle('off', i >= game.lives));
     document.getElementById('lives').setAttribute('aria-label', game.lives + ' lives left');
