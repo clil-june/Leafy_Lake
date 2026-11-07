@@ -118,8 +118,8 @@ button:focus-visible { outline: 3px solid var(--foam); outline-offset: 2px; }
 .hud { margin-top: 8px; display: flex; align-items: center; gap: 14px; font-size: 15px; font-weight: 600; text-shadow: 0 1px 10px rgba(8, 50, 110, 0.7); font-variant-numeric: tabular-nums; }
 .hud b { font-size: 20px; }
 .lives { display: flex; gap: 6px; }
-.lives i { width: 14px; height: 14px; border-radius: 50%; background: #9bd44f; border: 2px solid rgba(26, 74, 36, 0.85); box-sizing: border-box; }
-.lives i.off { background: rgba(255, 255, 255, 0.18); border-color: rgba(255, 255, 255, 0.5); }
+.lives i { width: 32px; height: 32px; background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cg stroke=%22%231f4a45%22 stroke-width=%223.6%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cpath fill=%22%238cc63f%22 d=%22M7 55C6 36 20 23 37 25C42 17 54 17 58 25C61 30 57 35 50 36C46 37 46 41 48 46C49 50 48 55 44 55Z%22/%3E%3Cpath fill=%22%23a6d65a%22 d=%22M13 53C13 43 22 37 34 39C34 47 26 53 13 53Z%22/%3E%3Ccircle fill=%22%23fff%22 cx=%2245%22 cy=%2221%22 r=%226%22/%3E%3C/g%3E%3Ccircle fill=%22%231f4a45%22 cx=%2246.5%22 cy=%2221.5%22 r=%222.4%22/%3E%3C/svg%3E") center / contain no-repeat; filter: drop-shadow(0 1px 4px rgba(8, 50, 110, 0.45)); transition: opacity 0.3s ease, filter 0.3s ease; }
+.lives i.off { opacity: 0.28; filter: grayscale(1) brightness(1.4); }
 .toast { position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 130px); transform: translate(-50%, -6px); padding: 8px 16px; border-radius: 999px; background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.4); font-weight: 600; font-size: 15px; opacity: 0; transition: opacity 0.25s ease, transform 0.25s ease; pointer-events: none; white-space: nowrap; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 .over { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(8, 52, 104, 0.4); padding: 16px; }
