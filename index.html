@@ -10,6 +10,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600&family=Outfit:wght@500;600&display=swap">
 <style>
+.topbar h1 { display: none; }
+.modes { margin-left: auto; }
+.hud .score { display: none; }
 body.intro .top, body.intro .dock { opacity: 0; pointer-events: none; }
 .top, .dock { transition: opacity 0.9s ease; }
 /* Layout: one full-bleed watercolor pond canvas; a title top-left and glass controls docked to the bottom edge. */
@@ -1147,7 +1150,7 @@ function paintLayers(alpha) {
       for (let yy = 0; yy < sp.h; yy += 2) for (let xx = 0; xx < sp.w; xx += 2) if (id[(yy * sp.w + xx) * 4 + 3] > 120) { mx += xx; my += yy; mn++; x0 = Math.min(x0, xx); x1 = Math.max(x1, xx); }
       const cx = mn ? mx / mn : sp.px, cy = mn ? my / mn : sp.py, bw = Math.max(40, x1 - x0);
       let fs = size; g.font = '600 ' + fs + 'px Outfit, "DM Sans", system-ui, sans-serif';
-      const wmax = bw * 0.5, mw = Math.max(g.measureText('Leafy').width, g.measureText('Lake').width);
+      const wmax = bw * 0.44, mw = Math.max(g.measureText('Leafy').width, g.measureText('Lake').width);
       fs = fs * Math.min(1, wmax / mw); g.font = '600 ' + fs + 'px Outfit, "DM Sans", system-ui, sans-serif';
       g.translate(cx, cy); g.rotate(-base);
       // the title is a hole punched through the leaf (water shows through), with a thin darker rim
@@ -1160,7 +1163,7 @@ function paintLayers(alpha) {
       g.globalCompositeOperation = 'destination-out'; g.fillStyle = '#000';
       g.fillText('Leafy', 0, -fs * 0.52); g.fillText('Lake', 0, fs * 0.55);
       g.setTransform(1, 0, 0, 1, 0, 0);
-      intro = { t: 0, sp, text, base, started: false, r: R0 * 1.55, landY: H * 0.47, x0: W / 2, rip: 0, startCb };
+      intro = { t: 0, sp, text, base, started: false, r: R0 * 2.35, landY: H * 0.47, x0: W / 2, rip: 0, startCb };
     };
     (document.fonts && document.fonts.load ? document.fonts.load('600 40px Outfit').catch(() => {}) : Promise.resolve()).then(ready, ready);
   }
