@@ -127,6 +127,20 @@ button:focus-visible { outline: 3px solid var(--foam); outline-offset: 2px; }
 .over h2 { margin: 0; font-family: var(--font-display); font-size: 26px; font-weight: 600; }
 .over p { margin: 0; font-size: 17px; font-variant-numeric: tabular-nums; }
 [hidden] { display: none !important; }
+
+/* smooth ease-in-out when switching modes */
+:root { --io: cubic-bezier(0.42, 0, 0.58, 1); }
+.dock { gap: 0; }
+.hud, .dock .row { max-height: 64px; margin-bottom: 10px; overflow: hidden; opacity: 1; transition: opacity 0.4s var(--io), max-height 0.4s var(--io), margin 0.4s var(--io); }
+.hud[hidden], .dock .row:has(#drop[hidden]) { display: flex !important; max-height: 0; margin-bottom: 0; opacity: 0; pointer-events: none; }
+.dock .row:has(#drop[hidden]) #drop { display: block !important; }
+.modes button { transition: background-color 0.35s var(--io), color 0.35s var(--io); }
+.over { transition: opacity 0.4s var(--io); }
+.over .card { transition: transform 0.4s var(--io); }
+.over[hidden] { display: flex !important; opacity: 0; pointer-events: none; }
+.over[hidden] .card { transform: scale(0.96); }
+.hint { transition: opacity 0.25s var(--io); }
+.hint.swap { opacity: 0 !important; }
 </style>
 
 <canvas id="pond" aria-label="A pond with autumn leaves. Drag a leaf to move it and leave a wake."></canvas>
@@ -932,9 +946,14 @@ const FS = {};
     document.getElementById('drop').hidden = m === 'game';
     document.getElementById('over').hidden = true;
     document.body.classList.remove('played');
-    document.getElementById('hint').textContent = m === 'game'
+    const hintEl = document.getElementById('hint'), hintTxt = m === 'game'
       ? 'Slide a leaf under the landing ring. Keep leaves from bumping.'
       : 'Drag a leaf across the water to leave a wake.';
+    if (!hintEl.textContent || !hintEl.isConnected || document.body.classList.contains('intro')) hintEl.textContent = hintTxt;
+    else if (hintEl.textContent !== hintTxt) {
+      hintEl.classList.add('swap');
+      clearTimeout(hintEl._t); hintEl._t = setTimeout(() => { hintEl.textContent = hintTxt; hintEl.classList.remove('swap'); }, 260);
+    }
     frogs.length = 0; for (const l of leaves) l.frog = null;
     if (m === 'game') startGame();
     try { localStorage.setItem('leafyLake.mode', m); } catch (_) {}
